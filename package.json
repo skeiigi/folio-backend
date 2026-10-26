@@ -1,0 +1,16 @@
+{
+  "name": "folio-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Folio REST API — portfolios, services and creative briefs",
+  "engines": { "node": ">=22.12.0 <25" },
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:seed": "node scripts/seed.js",
+    "check": "node scripts/check.js",
+    "test": "node --test --test-concurrency=1 tests/*.test.js"
+  }
+}

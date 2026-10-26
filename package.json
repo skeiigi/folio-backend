@@ -4,13 +4,29 @@
   "private": true,
   "type": "module",
   "description": "Folio REST API — portfolios, services and creative briefs",
-  "engines": { "node": ">=22.12.0 <25" },
+  "engines": {
+    "node": ">=22.12.0 <25"
+  },
   "scripts": {
+    "setup": "node scripts/setup-local.js",
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
     "db:migrate": "node scripts/migrate.js",
     "db:seed": "node scripts/seed.js",
     "check": "node scripts/check.js",
     "test": "node --test --test-concurrency=1 tests/*.test.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1156.0",
+    "@electric-sql/pglite": "^0.5.12",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "jose": "^6.2.13",
+    "multer": "^2.5.0",
+    "pg": "^8.23.1",
+    "zod": "^3.25.76"
   }
 }

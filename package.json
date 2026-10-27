@@ -28,5 +28,8 @@
     "multer": "^2.5.0",
     "pg": "^8.23.1",
     "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10"
   }
 }

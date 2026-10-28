@@ -21,3 +21,5 @@ services:
         sync: false
       - key: STORAGE_DRIVER
         value: postgres
+      - key: BITRIX24_WEBHOOK_URL
+        sync: false

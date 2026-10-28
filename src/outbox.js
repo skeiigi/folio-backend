@@ -1,5 +1,6 @@
 import { randomUUID, createHmac } from "node:crypto";
-import { all } from "./db.js";
+import { all, one } from "./db.js";
+import { syncBriefToBitrix } from "./bitrix24.js";
 
 export async function enqueueBriefEvent(
   tx,
@@ -16,14 +17,17 @@ export async function enqueueBriefEvent(
     data: {
       id: brief.id,
       title: brief.title,
+      description: brief.description,
       clientUserId: brief.clientUserId,
       authorProfileId: brief.authorProfileId,
       budgetRange: brief.budgetRange,
+      desiredDeadline: brief.desiredDeadline,
       status: brief.status,
     },
   };
   const targets = [];
   if (config.integrations.crmUrl) targets.push(["crm", data]);
+  if (config.integrations.bitrixUrl) targets.push(["bitrix24", data]);
   if (config.integrations.bpmsUrl) targets.push(["bpms", data]);
   if (
     config.integrations.resendKey &&
@@ -66,7 +70,14 @@ export function startOutbox(db, config) {
     for (const job of jobs) {
       try {
         let response;
-        if (job.target === "email") {
+        if (job.target === "bitrix24") {
+          const brief = await one(db, "SELECT * FROM briefs WHERE id=$1", [
+            job.payload.data.id,
+          ]);
+          if (!brief) throw new Error("Folio brief no longer exists");
+          await syncBriefToBitrix(config.integrations.bitrixUrl, brief);
+          response = { ok: true };
+        } else if (job.target === "email") {
           response = await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {

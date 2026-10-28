@@ -30,6 +30,17 @@ export function loadConfig(env = process.env) {
         throw new Error("Production webhook URLs must use HTTPS");
     }
   }
+  if (env.BITRIX24_WEBHOOK_URL) {
+    const url = new URL(env.BITRIX24_WEBHOOK_URL);
+    if (production && url.protocol !== "https:")
+      throw new Error("Production Bitrix24 webhook URL must use HTTPS");
+    if (!/^\/rest\/\d+\/[^/]+\/?$/.test(url.pathname))
+      throw new Error(
+        "BITRIX24_WEBHOOK_URL must be an incoming REST webhook base URL",
+      );
+    if (env.CRM_WEBHOOK_URL)
+      throw new Error("Use either BITRIX24_WEBHOOK_URL or CRM_WEBHOOK_URL");
+  }
   if (
     env.STORAGE_DRIVER === "s3" &&
     ![env.S3_BUCKET, env.S3_ACCESS_KEY_ID, env.S3_SECRET_ACCESS_KEY].every(
@@ -59,6 +70,7 @@ export function loadConfig(env = process.env) {
       resendKey: env.RESEND_API_KEY,
       mailFrom: env.MAIL_FROM,
       crmUrl: env.CRM_WEBHOOK_URL,
+      bitrixUrl: env.BITRIX24_WEBHOOK_URL,
       bpmsUrl: env.BPMS_WEBHOOK_URL,
       secret: env.WEBHOOK_SECRET,
     },
